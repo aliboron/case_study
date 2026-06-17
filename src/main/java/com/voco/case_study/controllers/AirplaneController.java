@@ -1,7 +1,10 @@
 package com.voco.case_study.controllers;
 
+import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.dtos.AirportRequest;
+import com.voco.case_study.models.Airplane;
 import com.voco.case_study.models.Airport;
+import com.voco.case_study.services.AirplaneService;
 import com.voco.case_study.services.AirportService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,35 +17,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/airports")
-@Tag(name = "Airport Endpoints")
-public class AirportController {
+@RequestMapping("/airplanes")
+@Tag(name = "airplanes")
+public class AirplaneController {
 
     @Autowired
-    private AirportService airportService;
+    private AirplaneService airplaneService;
 
     @GetMapping
-    public ResponseEntity<List<Airport>> getAll() {
-        return ResponseEntity.ok(airportService.getAll());
+    public ResponseEntity<List<Airplane>> getAll() {
+        return ResponseEntity.ok(airplaneService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Airport> getById(@PathVariable Long id) {
-        return airportService.getById(id)
+    public ResponseEntity<Airplane> getById(@PathVariable Long id) {
+        return airplaneService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Airport> create(@RequestBody @Valid AirportRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(airportService.create(request));
+    public ResponseEntity<Airplane> create(@RequestBody @Valid AirplaneRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(airplaneService.create(request));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Airport> update(@PathVariable Long id, @RequestBody @Valid AirportRequest request) {
-        return airportService.update(id, request)
+    public ResponseEntity<Airplane> update(@PathVariable Long id, @RequestBody @Valid AirplaneRequest request) {
+        return airplaneService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -50,7 +53,7 @@ public class AirportController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (airportService.delete(id)) {
+        if (airplaneService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

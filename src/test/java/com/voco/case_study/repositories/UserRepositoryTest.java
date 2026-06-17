@@ -1,12 +1,11 @@
-package com.voco.case_study;
+package com.voco.case_study.repositories;
 
-import com.voco.case_study.models.Airport;
-import com.voco.case_study.repositories.AirportRepository;
+import com.voco.case_study.enums.Role;
+import com.voco.case_study.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-class AirportRepositoryTest {
+class UserRepositoryTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
@@ -32,38 +31,22 @@ class AirportRepositoryTest {
     }
 
     @Autowired
-    private AirportRepository airportRepository;
+    private UserRepository userRepository;
 
     @Test
-    void shouldSaveAndFindAirport() {
-        Airport airport = new Airport();
-        airport.setIataCode("ESB");
-        airport.setName("Esenboğa");
-        airport.setCity("Ankara");
-        airport.setCountry("Turkey");
+    void shouldSaveAndFindUser() {
+        User u1 = new User();
+        u1.setAddress("adana");
+        u1.setName("horoz");
+        u1.setSurname("horozz");
+        u1.setEmail("horoz@mail.com");
+        u1.setRole(Role.PASSENGER);
+        u1.setPasswordHash(String.valueOf(u1.hashCode()));
 
-        Airport saved = airportRepository.save(airport);
+        User saved = userRepository.saveAndFlush(u1);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getIataCode()).isEqualTo("ESB");
+        assertThat(saved.getName()).isEqualTo("horoz");
     }
 
-    @Test
-    void shouldFailOnDuplicateIataCode() {
-        Airport a1 = new Airport();
-        a1.setIataCode("IST");
-        a1.setName("Sabiha");
-        a1.setCity("Istanbul");
-        a1.setCountry("Turkey");
-        airportRepository.save(a1);
-
-        Airport a2 = new Airport();
-        a2.setIataCode("IST"); // duplicate
-        a2.setName("Atatürk");
-        a2.setCity("Istanbul");
-        a2.setCountry("Turkey");
-
-        assertThatThrownBy(() -> airportRepository.saveAndFlush(a2))
-                .isInstanceOf(DataIntegrityViolationException.class);
-    }
 }

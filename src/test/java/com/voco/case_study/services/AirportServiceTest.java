@@ -1,9 +1,8 @@
-package com.voco.case_study;
+package com.voco.case_study.services;
 
 import com.voco.case_study.dtos.AirportRequest;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.repositories.AirportRepository;
-import com.voco.case_study.services.AirportService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

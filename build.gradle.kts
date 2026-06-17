@@ -24,11 +24,14 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    //implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.jsonwebtoken:jjwt:0.13.0")
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
+    testImplementation("org.springframework.boot:spring-boot-starter-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-data-jpa-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -36,6 +39,8 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.20.4")
 
     runtimeOnly("org.postgresql:postgresql")
+
+
 }
 
 tasks.withType<Test> {

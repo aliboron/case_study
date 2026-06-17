@@ -17,3 +17,6 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+jwt:
+  secret: afd9da5773cf04bf4fc5ac2a8fcdf433885454e831ff1611f1da7b9ed1fd3a7a
+  expiration: 9000

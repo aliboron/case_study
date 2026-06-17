@@ -1,10 +1,6 @@
-package com.voco.case_study;
+package com.voco.case_study.repositories;
 
-import com.voco.case_study.enums.Role;
 import com.voco.case_study.models.Airport;
-import com.voco.case_study.models.User;
-import com.voco.case_study.repositories.AirportRepository;
-import com.voco.case_study.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -22,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-class UserRepositoryTest {
+class AirportRepositoryTest {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
@@ -35,22 +31,38 @@ class UserRepositoryTest {
     }
 
     @Autowired
-    private UserRepository userRepository;
+    private AirportRepository airportRepository;
 
     @Test
-    void shouldSaveAndFindUser() {
-        User u1 = new User();
-        u1.setAddress("adana");
-        u1.setName("horoz");
-        u1.setSurname("horozz");
-        u1.setEmail("horoz@mail.com");
-        u1.setRole(Role.PASSENGER);
-        u1.setPasswordHash(String.valueOf(u1.hashCode()));
+    void shouldSaveAndFindAirport() {
+        Airport airport = new Airport();
+        airport.setIataCode("ESB");
+        airport.setName("Esenboğa");
+        airport.setCity("Ankara");
+        airport.setCountry("Turkey");
 
-        User saved = userRepository.saveAndFlush(u1);
+        Airport saved = airportRepository.save(airport);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getName()).isEqualTo("horoz");
+        assertThat(saved.getIataCode()).isEqualTo("ESB");
     }
 
+    @Test
+    void shouldFailOnDuplicateIataCode() {
+        Airport a1 = new Airport();
+        a1.setIataCode("IST");
+        a1.setName("Sabiha");
+        a1.setCity("Istanbul");
+        a1.setCountry("Turkey");
+        airportRepository.save(a1);
+
+        Airport a2 = new Airport();
+        a2.setIataCode("IST"); // duplicate
+        a2.setName("Atatürk");
+        a2.setCity("Istanbul");
+        a2.setCountry("Turkey");
+
+        assertThatThrownBy(() -> airportRepository.saveAndFlush(a2))
+                .isInstanceOf(DataIntegrityViolationException.class);
+    }
 }
