@@ -2,6 +2,7 @@ package com.voco.case_study.controllers;
 
 import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.dtos.AirportRequest;
+import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.services.AirplaneService;
@@ -33,7 +34,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> getById(@PathVariable Long id) {
         return airplaneService.getById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
     }
 
     @PostMapping
@@ -47,7 +48,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> update(@PathVariable Long id, @RequestBody @Valid AirplaneRequest request) {
         return airplaneService.update(id, request)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
     }
 
     @DeleteMapping("/{id}")
@@ -56,6 +57,6 @@ public class AirplaneController {
         if (airplaneService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Airport", "id", id);
     }
 }

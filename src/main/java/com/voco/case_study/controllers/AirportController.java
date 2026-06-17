@@ -1,6 +1,7 @@
 package com.voco.case_study.controllers;
 
 import com.voco.case_study.dtos.AirportRequest;
+import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.services.AirportService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +31,7 @@ public class AirportController {
     public ResponseEntity<Airport> getById(@PathVariable Long id) {
         return airportService.getById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
     }
 
     @PostMapping
@@ -44,7 +45,7 @@ public class AirportController {
     public ResponseEntity<Airport> update(@PathVariable Long id, @RequestBody @Valid AirportRequest request) {
         return airportService.update(id, request)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
     }
 
     @DeleteMapping("/{id}")
@@ -53,6 +54,6 @@ public class AirportController {
         if (airportService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Airport", "id", id);
     }
 }
