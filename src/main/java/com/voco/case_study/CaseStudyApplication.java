@@ -24,11 +24,11 @@ public class CaseStudyApplication {
 
             if (!userRepository.existsByEmail(adminEmail)) {
                 User admin = new User();
-                admin.setName("Super");
-                admin.setSurname("Admin");
+                admin.setName("Admin");
+                admin.setSurname("Bey");
                 admin.setEmail(adminEmail);
                 admin.setAddress("Your Head");
-                admin.setRole(Role.SUPERUSER);
+                admin.setRole(Role.ADMIN);
                 admin.setPasswordHash(passwordEncoder.encode("nopassword"));
 
                 userRepository.save(admin);

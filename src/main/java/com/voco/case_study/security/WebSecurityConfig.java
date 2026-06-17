@@ -61,7 +61,12 @@ public class WebSecurityConfig {
                         s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(a ->
-                        a.requestMatchers("/auth/**", "/welcome", "/error", "/test/role/all").permitAll()
+                        a.requestMatchers("/auth/**",
+                                "/error",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 );
 
