@@ -1,12 +1,9 @@
 package com.voco.case_study.controllers;
 
 import com.voco.case_study.dtos.AirplaneRequest;
-import com.voco.case_study.dtos.AirportRequest;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
-import com.voco.case_study.models.Airport;
 import com.voco.case_study.services.AirplaneService;
-import com.voco.case_study.services.AirportService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/airports")
-@Tag(name = "Airport Endpoints")
+@Tag(name = "airports")
 public class AirportController {
 
     @Autowired

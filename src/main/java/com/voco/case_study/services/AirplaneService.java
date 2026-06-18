@@ -24,21 +24,21 @@ public class AirplaneService {
     }
 
     public Airplane create(AirplaneRequest request) {
-        Airplane airport = new Airplane();
-        airport.setAirline(request.getAirline());
-        airport.setCapacity(request.getCapacity());
-        airport.setModel(request.getModel());
-        airport.setTailNumber(request.getTailNumber());
-        return airplaneRepository.save(airport);
+        Airplane airplane = new Airplane();
+        airplane.setAirline(request.getAirline());
+        airplane.setCapacity(request.getCapacity());
+        airplane.setModel(request.getModel());
+        airplane.setTailNumber(request.getTailNumber());
+        return airplaneRepository.save(airplane);
     }
 
     public Optional<Airplane> update(Long id, AirplaneRequest request) {
-        return airplaneRepository.findById(id).map(airport -> {
-            airport.setAirline(request.getAirline());
-            airport.setCapacity(request.getCapacity());
-            airport.setModel(request.getModel());
-            airport.setTailNumber(request.getTailNumber());
-            return airplaneRepository.save(airport);
+        return airplaneRepository.findById(id).map(airplane -> {
+            airplane.setAirline(request.getAirline());
+            airplane.setCapacity(request.getCapacity());
+            airplane.setModel(request.getModel());
+            airplane.setTailNumber(request.getTailNumber());
+            return airplaneRepository.save(airplane);
         });
     }
 
