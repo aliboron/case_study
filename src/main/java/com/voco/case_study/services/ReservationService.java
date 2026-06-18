@@ -14,6 +14,9 @@ import com.voco.case_study.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ReservationService {
 
@@ -22,13 +25,25 @@ public class ReservationService {
     @Autowired private AirplaneRepository airplaneRepository;
     @Autowired private AirportRepository airportRepository;
 
+    public List<Reservation> getUserReservations(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        return reservationRepository.findByUser(user);
+    }
+
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
+
+
     public Reservation create(ReservationRequest request, String userEmail) {
 
-        // 1. İş Kuralı: Koltuk dolu mu kontrolü (Çakışma engelleme)
-        boolean isSeatTaken = reservationRepository.existsByAirplaneIdAndSeatNumberAndFlightDate(
+
+        boolean isSeatTaken = reservationRepository.existsByAirplaneIdAndSeatNumberAndFlightDateAndStatus(
                 request.getAirplaneId(),
                 request.getSeatNumber(),
-                request.getFlightDate()
+                request.getFlightDate(),
+                ReservationStatus.CONFIRMED
         );
 
         if (isSeatTaken) {
@@ -40,6 +55,10 @@ public class ReservationService {
 
         Airplane airplane = airplaneRepository.findById(request.getAirplaneId())
                 .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", request.getAirplaneId()));
+
+        if (request.getSeatNumber() > airplane.getCapacity()) {
+            throw new RuntimeException("Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
+        }
 
         Airport depAirport = airportRepository.findById(request.getDepartureAirportId())
                 .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.getDepartureAirportId()));
@@ -57,5 +76,12 @@ public class ReservationService {
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
         return reservationRepository.save(reservation);
+    }
+
+    public Optional<Reservation> cancel(Long reservationId){
+        return reservationRepository.findById(reservationId).map(reservation -> {
+            reservation.setStatus(ReservationStatus.CANCELLED);
+            return reservationRepository.save(reservation);
+        });
     }
 }
