@@ -34,7 +34,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> getById(@PathVariable Long id) {
         return airplaneService.getById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
     }
 
     @PostMapping
@@ -48,7 +48,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> update(@PathVariable Long id, @RequestBody @Valid AirplaneRequest request) {
         return airplaneService.update(id, request)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
     }
 
     @DeleteMapping("/{id}")
@@ -57,6 +57,6 @@ public class AirplaneController {
         if (airplaneService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
-        throw new ResourceNotFoundException("Airport", "id", id);
+        throw new ResourceNotFoundException("Airplane", "id", id);
     }
 }
