@@ -4,6 +4,8 @@ import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.repositories.AirplaneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,7 @@ public class AirplaneService {
     @Autowired
     private AirplaneRepository airplaneRepository;
 
+    @Cacheable("airplanes")
     public List<Airplane> getAll() {
         return airplaneRepository.findAll();
     }
@@ -23,6 +26,7 @@ public class AirplaneService {
         return airplaneRepository.findById(id);
     }
 
+    @CacheEvict(value = "airplanes", allEntries = true)
     public Airplane create(AirplaneRequest request) {
         Airplane airplane = new Airplane();
         airplane.setAirline(request.getAirline());
@@ -32,6 +36,7 @@ public class AirplaneService {
         return airplaneRepository.save(airplane);
     }
 
+    @CacheEvict(value = "airplanes", allEntries = true)
     public Optional<Airplane> update(Long id, AirplaneRequest request) {
         return airplaneRepository.findById(id).map(airplane -> {
             airplane.setAirline(request.getAirline());
@@ -42,6 +47,7 @@ public class AirplaneService {
         });
     }
 
+    @CacheEvict(value = "airplanes", allEntries = true)
     public boolean delete(Long id) {
         if (airplaneRepository.existsById(id)) {
             airplaneRepository.deleteById(id);

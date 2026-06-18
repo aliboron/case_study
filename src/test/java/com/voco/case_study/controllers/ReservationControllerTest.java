@@ -80,16 +80,4 @@ class ReservationControllerTest {
                 .andExpect(status().isUnauthorized()); // 401 dönmesini bekliyoruz
     }
 
-    /*
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void deleteReservation_WithAdminRole_ShouldReturn204() throws Exception {
-
-
-
-        // EYLEM VE DOĞRULAMA: DELETE isteği at ve 204 No Content bekle
-        mockMvc.perform(delete("/reservations/1"))
-                .andExpect(status().isNoContent());
-    }
-     */
 }

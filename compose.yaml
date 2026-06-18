@@ -7,6 +7,8 @@ services:
     depends_on:
       postgres:
         condition: service_started
+      redis:
+        condition: service_started
 
   postgres:
     image: 'postgres:latest'
@@ -16,3 +18,9 @@ services:
       - 'POSTGRES_USER=root'
     ports:
       - '5432:5432'
+
+  redis:
+    image: 'redis:7-alpine'
+    container_name: case_study-redis-1
+    ports:
+      - '6379:6379'

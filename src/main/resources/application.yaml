@@ -3,6 +3,12 @@ spring:
     name: case_study
   config:
     import: "optional:file:local.env[.properties]"
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cache:
+    type: redis
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}

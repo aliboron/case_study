@@ -4,6 +4,8 @@ import com.voco.case_study.dtos.AirportRequest;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.repositories.AirportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,7 @@ public class AirportService {
     @Autowired
     private AirportRepository airportRepository;
 
+    @Cacheable("airports")
     public List<Airport> getAll() {
         return airportRepository.findAll();
     }
@@ -23,6 +26,7 @@ public class AirportService {
         return airportRepository.findById(id);
     }
 
+    @CacheEvict(value = "airports", allEntries = true)
     public Airport create(AirportRequest request) {
         Airport airport = new Airport();
         airport.setIataCode(request.getIataCode());
@@ -32,6 +36,7 @@ public class AirportService {
         return airportRepository.save(airport);
     }
 
+    @CacheEvict(value = "airports", allEntries = true)
     public Optional<Airport> update(Long id, AirportRequest request) {
         return airportRepository.findById(id).map(airport -> {
             airport.setIataCode(request.getIataCode());
@@ -42,6 +47,7 @@ public class AirportService {
         });
     }
 
+    @CacheEvict(value = "airports", allEntries = true)
     public boolean delete(Long id) {
         if (airportRepository.existsById(id)) {
             airportRepository.deleteById(id);
