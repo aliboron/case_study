@@ -1,6 +1,7 @@
 package com.voco.case_study.controllers;
 
 import com.voco.case_study.dtos.ReservationRequest;
+import com.voco.case_study.dtos.ReservationResponse;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Reservation;
 import com.voco.case_study.services.ReservationService;
@@ -14,10 +15,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservations")
-@Tag(name = "Reservation Endpoints")
+@Tag(name = "reservations")
 public class ReservationController {
 
     @Autowired
@@ -25,27 +27,41 @@ public class ReservationController {
 
     @PostMapping
     @PreAuthorize("hasRole('PASSENGER') or hasRole('ADMIN')")
-    public ResponseEntity<Reservation> createReservation(
+    public ResponseEntity<ReservationResponse> createReservation(
             @Valid @RequestBody ReservationRequest request,
             Authentication authentication
     ) {
         String currentUserEmail = authentication.getName();
         Reservation createdReservation = reservationService.create(request, currentUserEmail);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
+
+        ReservationResponse responseDto = ReservationResponse.fromEntity(createdReservation);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('PASSENGER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Reservation>> getMyReservations(Authentication authentication) {
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(Authentication authentication) {
         String currentUserEmail = authentication.getName();
         List<Reservation> myReservations = reservationService.getUserReservations(currentUserEmail);
-        return ResponseEntity.ok(myReservations);
+
+        List<ReservationResponse> responseList = myReservations.stream()
+                .map(ReservationResponse::fromEntity)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Reservation>> getAllReservations() {
-        return ResponseEntity.ok(reservationService.getAllReservations());
+    public ResponseEntity<List<ReservationResponse>> getAllReservations() {
+        List<Reservation> allReservations = reservationService.getAllReservations();
+
+        List<ReservationResponse> responseList = allReservations.stream()
+                .map(ReservationResponse::fromEntity)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 
     @DeleteMapping("/{id}")

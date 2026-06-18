@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.datasource.driverClassName=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
+        "sprin  g.jpa.database-platform=org.hibernate.dialect.H2Dialect",
         "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 class ReservationControllerTest {
@@ -58,26 +58,38 @@ class ReservationControllerTest {
         Mockito.when(reservationService.create(any(ReservationRequest.class), eq("test@voco.com")))
                 .thenReturn(fakeReservation);
 
-        // 2. EYLEM VE DOĞRULAMA (Act & Assert): İsteği atıyoruz ve sonucu bekliyoruz
+
         mockMvc.perform(post("/reservations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))) // DTO'yu JSON string'e çevirir
-                .andExpect(status().isCreated()); // 201 Created dönmesini bekliyoruz
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
     }
 
     @Test
     void createReservation_WithoutLogin_ShouldReturn401() throws Exception {
 
-        // HAZIRLIK: Bu sefer @WithMockUser koymadık, yani token yok!
+
         ReservationRequest request = new ReservationRequest();
         request.setAirplaneId(1L);
         request.setFlightDate(LocalDate.now().plusDays(5));
         request.setSeatNumber(12);
 
-        // EYLEM VE DOĞRULAMA: Kapıdan çevrilmeyi (401) bekliyoruz
         mockMvc.perform(post("/reservations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized()); // 401 dönmesini bekliyoruz
     }
+
+    /*
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteReservation_WithAdminRole_ShouldReturn204() throws Exception {
+
+
+
+        // EYLEM VE DOĞRULAMA: DELETE isteği at ve 204 No Content bekle
+        mockMvc.perform(delete("/reservations/1"))
+                .andExpect(status().isNoContent());
+    }
+     */
 }

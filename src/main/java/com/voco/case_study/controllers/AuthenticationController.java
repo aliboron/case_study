@@ -33,11 +33,7 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        try {
-            String token = authService.registerUser(signUpRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(token);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        String token = authService.registerUser(signUpRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }
 }

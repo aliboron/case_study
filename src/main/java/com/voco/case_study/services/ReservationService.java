@@ -2,6 +2,8 @@ package com.voco.case_study.services;
 
 import com.voco.case_study.dtos.ReservationRequest;
 import com.voco.case_study.enums.ReservationStatus;
+import com.voco.case_study.exceptions.BadRequestException;
+import com.voco.case_study.exceptions.ConflictException;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.models.Airport;
@@ -24,6 +26,7 @@ public class ReservationService {
     @Autowired private UserRepository userRepository;
     @Autowired private AirplaneRepository airplaneRepository;
     @Autowired private AirportRepository airportRepository;
+    @Autowired MailService mailService;
 
     public List<Reservation> getUserReservations(String email) {
         User user = userRepository.findByEmail(email)
@@ -47,7 +50,7 @@ public class ReservationService {
         );
 
         if (isSeatTaken) {
-            throw new RuntimeException("Seat already taken!");
+            throw new ConflictException("Seat already taken!");
         }
 
         User user = userRepository.findByEmail(userEmail)
@@ -57,7 +60,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", request.getAirplaneId()));
 
         if (request.getSeatNumber() > airplane.getCapacity()) {
-            throw new RuntimeException("Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
+            throw new BadRequestException("Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
         }
 
         Airport depAirport = airportRepository.findById(request.getDepartureAirportId())
@@ -75,7 +78,13 @@ public class ReservationService {
         reservation.setSeatNumber(request.getSeatNumber());
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
+        try {
+            mailService.sendPlainText(userEmail, "Reservation successful!", "Thank you for using our service");
+        } catch (Exception e) {
+            System.out.println("Mail gönderim hatası: " + e.getMessage());
+        }
         return reservationRepository.save(reservation);
+
     }
 
     public Optional<Reservation> cancel(Long reservationId){

@@ -3,6 +3,7 @@ package com.voco.case_study.services;
 import com.voco.case_study.dtos.LoginRequest;
 import com.voco.case_study.dtos.SignupRequest;
 import com.voco.case_study.enums.Role;
+import com.voco.case_study.exceptions.DuplicateResourceException;
 import com.voco.case_study.models.User;
 import com.voco.case_study.repositories.UserRepository;
 import com.voco.case_study.security.JwtUtil;
@@ -49,7 +50,7 @@ public class AuthService {
 
     public String registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new RuntimeException("Error: Email is already in use!");
+            throw new DuplicateResourceException("Error: Email is already in use!");
         }
 
         User newUser = new User();
