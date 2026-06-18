@@ -30,6 +30,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.jsonwebtoken:jjwt:0.13.0")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+    implementation("org.springframework.boot:spring-boot-starter-flyway:4.0.1")
+    implementation("org.flywaydb:flyway-database-postgresql")
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -41,6 +43,8 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.20.4")
 
     testRuntimeOnly("com.h2database:h2")
+
+
 
 
 }
