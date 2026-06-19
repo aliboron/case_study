@@ -3,6 +3,7 @@ package com.voco.case_study.controllers;
 import com.voco.case_study.dtos.LoginRequest;
 import com.voco.case_study.dtos.SignupRequest;
 import com.voco.case_study.services.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "auth")
+@SecurityRequirements()
 public class AuthenticationController {
 
     private final AuthService authService;

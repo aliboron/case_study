@@ -13,6 +13,8 @@ import com.voco.case_study.repositories.AirplaneRepository;
 import com.voco.case_study.repositories.AirportRepository;
 import com.voco.case_study.repositories.ReservationRepository;
 import com.voco.case_study.repositories.UserRepository;
+import com.voco.case_study.models.QReservation;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class ReservationService {
     @Autowired private UserRepository userRepository;
     @Autowired private AirplaneRepository airplaneRepository;
     @Autowired private AirportRepository airportRepository;
-    @Autowired MailService mailService;
+    @Autowired private MailService mailService;
 
     public List<Reservation> getUserReservations(String email) {
         User user = userRepository.findByEmail(email)
@@ -36,6 +38,20 @@ public class ReservationService {
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
+    }
+
+    public Iterable<Reservation> searchReservations(String email, ReservationStatus status) {
+        QReservation qReservation = QReservation.reservation;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (email != null && !email.isEmpty()) {
+            builder.and(qReservation.user.email.eq(email));
+        }
+        if (status != null) {
+            builder.and(qReservation.status.eq(status));
+        }
+
+        return reservationRepository.findAll(builder);
     }
 
 

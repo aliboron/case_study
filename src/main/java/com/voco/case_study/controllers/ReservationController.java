@@ -64,6 +64,20 @@ public class ReservationController {
         return ResponseEntity.ok(responseList);
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ReservationResponse>> searchReservations(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) com.voco.case_study.enums.ReservationStatus status) {
+        
+        Iterable<Reservation> searchResults = reservationService.searchReservations(email, status);
+        
+        List<ReservationResponse> responseList = new java.util.ArrayList<>();
+        searchResults.forEach(res -> responseList.add(ReservationResponse.fromEntity(res)));
+        
+        return ResponseEntity.ok(responseList);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
