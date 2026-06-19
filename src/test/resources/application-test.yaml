@@ -1,0 +1,10 @@
+jwt:
+  secret: MySuperSecretKeyThatIsAtLeast32BytesLongForTestingPurposes123!
+  expiration: 86400000
+
+spring:
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
