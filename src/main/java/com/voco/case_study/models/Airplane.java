@@ -1,5 +1,7 @@
 package com.voco.case_study.models;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Min;
@@ -10,8 +12,8 @@ import jakarta.validation.constraints.NotNull;
 public class Airplane {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotBlank
     @Column(nullable = false)
@@ -32,7 +34,7 @@ public class Airplane {
 
     public Airplane() {}
 
-    public Airplane(Long id, String model, String tailNumber, Integer capacity, String airline) {
+    public Airplane(UUID id, String model, String tailNumber, Integer capacity, String airline) {
         this.id = id;
         this.model = model;
         this.tailNumber = tailNumber;
@@ -40,8 +42,8 @@ public class Airplane {
         this.airline = airline;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getModel() { return model; }
     public void setModel(String model) { this.model = model; }

@@ -1,5 +1,7 @@
 package com.voco.case_study.models;
 
+import java.util.UUID;
+
 import com.voco.case_study.enums.ReservationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -12,8 +14,8 @@ import java.time.LocalDate;
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,7 +48,7 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(Long id, User user, Airplane airplane, Airport departureAirport, Airport arrivalAirport, LocalDate flightDate, Integer seatNumber, ReservationStatus status) {
+    public Reservation(UUID id, User user, Airplane airplane, Airport departureAirport, Airport arrivalAirport, LocalDate flightDate, Integer seatNumber, ReservationStatus status) {
         this.id = id;
         this.user = user;
         this.airplane = airplane;
@@ -57,8 +59,8 @@ public class Reservation {
         this.status = status;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

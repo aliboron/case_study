@@ -1,5 +1,7 @@
 package com.voco.case_study.controllers;
 
+import java.util.UUID;
+
 import com.voco.case_study.dtos.AirportRequest;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airport;
@@ -30,7 +32,7 @@ public class AirportController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Airport> getById(@PathVariable Long id) {
+    public ResponseEntity<Airport> getById(@PathVariable UUID id) {
         return airportService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
@@ -44,7 +46,7 @@ public class AirportController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Airport> update(@PathVariable Long id, @RequestBody @Valid AirportRequest request) {
+    public ResponseEntity<Airport> update(@PathVariable UUID id, @RequestBody @Valid AirportRequest request) {
         return airportService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", id));
@@ -52,7 +54,7 @@ public class AirportController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         if (airportService.delete(id)) {
             return ResponseEntity.noContent().build();
         }

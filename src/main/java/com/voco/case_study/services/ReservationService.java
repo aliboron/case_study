@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ReservationService {
@@ -114,7 +115,7 @@ public class ReservationService {
 
     }
 
-    public Optional<Reservation> cancel(Long reservationId){
+    public Optional<Reservation> cancel(UUID reservationId){
         return reservationRepository.findById(reservationId).map(reservation -> {
             reservation.setStatus(ReservationStatus.CANCELLED);
             return reservationRepository.save(reservation);

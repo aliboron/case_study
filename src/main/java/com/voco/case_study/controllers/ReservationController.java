@@ -1,5 +1,7 @@
 package com.voco.case_study.controllers;
 
+import java.util.UUID;
+
 import com.voco.case_study.dtos.ReservationRequest;
 import com.voco.case_study.dtos.ReservationResponse;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
@@ -83,7 +85,7 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> cancelReservation(@PathVariable UUID id) {
         reservationService.cancel(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation", "id", id));
 

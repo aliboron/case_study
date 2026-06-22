@@ -1,5 +1,7 @@
 package com.voco.case_study.services;
 
+import java.util.UUID;
+
 import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.repositories.AirplaneRepository;
@@ -25,7 +27,7 @@ public class AirplaneService {
         return airplaneRepository.findAll();
     }
 
-    public Optional<Airplane> getById(Long id) {
+    public Optional<Airplane> getById(UUID id) {
         return airplaneRepository.findById(id);
     }
 
@@ -40,7 +42,7 @@ public class AirplaneService {
     }
 
     @CacheEvict(value = "airplanes", allEntries = true)
-    public Optional<Airplane> update(Long id, AirplaneRequest request) {
+    public Optional<Airplane> update(UUID id, AirplaneRequest request) {
         return airplaneRepository.findById(id).map(airplane -> {
             airplane.setAirline(request.airline());
             airplane.setCapacity(request.capacity());
@@ -51,7 +53,7 @@ public class AirplaneService {
     }
 
     @CacheEvict(value = "airplanes", allEntries = true)
-    public boolean delete(Long id) {
+    public boolean delete(UUID id) {
         if (airplaneRepository.existsById(id)) {
             airplaneRepository.deleteById(id);
             return true;

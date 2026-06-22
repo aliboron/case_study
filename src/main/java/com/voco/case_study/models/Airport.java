@@ -1,5 +1,7 @@
 package com.voco.case_study.models;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,8 +11,8 @@ import jakarta.validation.constraints.Size;
 public class Airport {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotBlank
     @Size(min = 3, max = 3)
@@ -31,7 +33,7 @@ public class Airport {
 
     public Airport() {}
 
-    public Airport(Long id, String iataCode, String name, String city, String country) {
+    public Airport(UUID id, String iataCode, String name, String city, String country) {
         this.id = id;
         this.iataCode = iataCode;
         this.name = name;
@@ -39,8 +41,8 @@ public class Airport {
         this.country = country;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getIataCode() { return iataCode; }
     public void setIataCode(String iataCode) { this.iataCode = iataCode; }

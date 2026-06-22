@@ -1,12 +1,14 @@
 package com.voco.case_study.dtos;
 
+import java.util.UUID;
+
 import com.voco.case_study.enums.ReservationStatus;
 import com.voco.case_study.models.Reservation;
 
 import java.time.LocalDate;
 
 public record ReservationResponse(
-        Long id,
+        UUID id,
         LocalDate flightDate,
         Integer seatNumber,
         ReservationStatus status,

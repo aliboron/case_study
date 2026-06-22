@@ -1,5 +1,7 @@
 package com.voco.case_study.controllers;
 
+import java.util.UUID;
+
 import com.voco.case_study.BaseIntegrationTest;
 import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.models.Airplane;
@@ -95,7 +97,7 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     void getAirplane_byId_NotFound() throws Exception {
         airplaneRepository.deleteAll();
 
-        mockMvc.perform(get("/airplanes/9999"))
+        mockMvc.perform(get("/airplanes/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 

@@ -1,5 +1,7 @@
 package com.voco.case_study.services;
 
+import java.util.UUID;
+
 import com.voco.case_study.dtos.AirportRequest;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.repositories.AirportRepository;
@@ -23,7 +25,7 @@ public class AirportService {
         return airportRepository.findAll();
     }
 
-    public Optional<Airport> getById(Long id) {
+    public Optional<Airport> getById(UUID id) {
         return airportRepository.findById(id);
     }
 
@@ -38,7 +40,7 @@ public class AirportService {
     }
 
     //@CacheEvict(value = "airports", allEntries = true)
-    public Optional<Airport> update(Long id, AirportRequest request) {
+    public Optional<Airport> update(UUID id, AirportRequest request) {
         return airportRepository.findById(id).map(airport -> {
             airport.setIataCode(request.iataCode());
             airport.setName(request.name());
@@ -49,7 +51,7 @@ public class AirportService {
     }
 
     //@CacheEvict(value = "airports", allEntries = true)
-    public boolean delete(Long id) {
+    public boolean delete(UUID id) {
         if (airportRepository.existsById(id)) {
             airportRepository.deleteById(id);
             return true;

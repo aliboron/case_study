@@ -1,5 +1,7 @@
 package com.voco.case_study.controllers;
 
+import java.util.UUID;
+
 import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
@@ -31,7 +33,7 @@ public class AirplaneController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Airplane> getById(@PathVariable Long id) {
+    public ResponseEntity<Airplane> getById(@PathVariable UUID id) {
         return airplaneService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
@@ -45,7 +47,7 @@ public class AirplaneController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Airplane> update(@PathVariable Long id, @RequestBody @Valid AirplaneRequest request) {
+    public ResponseEntity<Airplane> update(@PathVariable UUID id, @RequestBody @Valid AirplaneRequest request) {
         return airplaneService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
@@ -53,7 +55,7 @@ public class AirplaneController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         if (airplaneService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
