@@ -11,7 +11,6 @@ import com.voco.case_study.repositories.AirportRepository;
 import com.voco.case_study.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
@@ -21,7 +20,6 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 class ReservationControllerIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
@@ -68,12 +66,8 @@ class ReservationControllerIntegrationTest extends BaseIntegrationTest {
         airplane = airplaneRepository.save(airplane);
 
 
-        ReservationRequest request = new ReservationRequest();
-        request.setAirplaneId(airplane.getId());
-        request.setDepartureAirportId(departure.getId());
-        request.setArrivalAirportId(arrival.getId());
-        request.setFlightDate(LocalDate.now().plusDays(5));
-        request.setSeatNumber(12);
+        ReservationRequest request = new ReservationRequest(airplane.getId(),departure.getId(),arrival.getId(),
+                LocalDate.now().plusDays(5), 12);
 
         mockMvc.perform(post("/reservations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,14 +78,13 @@ class ReservationControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     void createReservation_WithoutLogin_ShouldReturn401() throws Exception {
 
-        ReservationRequest request = new ReservationRequest();
-        request.setAirplaneId(1L);
-        request.setFlightDate(LocalDate.now().plusDays(5));
-        request.setSeatNumber(12);
+        ReservationRequest request = new ReservationRequest(1L,12L,12L,
+                LocalDate.now().plusDays(5), 15);
 
         mockMvc.perform(post("/reservations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
+
 }

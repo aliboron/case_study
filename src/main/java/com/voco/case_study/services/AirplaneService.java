@@ -3,7 +3,6 @@ package com.voco.case_study.services;
 import com.voco.case_study.dtos.AirplaneRequest;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.repositories.AirplaneRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,12 @@ import java.util.Optional;
 @Service
 public class AirplaneService {
 
-    @Autowired
-    private AirplaneRepository airplaneRepository;
+
+    private final AirplaneRepository airplaneRepository;
+
+    public AirplaneService (AirplaneRepository airplaneRepository){
+        this.airplaneRepository  = airplaneRepository;
+    }
 
     @Cacheable("airplanes")
     public List<Airplane> getAll() {
@@ -29,20 +32,20 @@ public class AirplaneService {
     @CacheEvict(value = "airplanes", allEntries = true)
     public Airplane create(AirplaneRequest request) {
         Airplane airplane = new Airplane();
-        airplane.setAirline(request.getAirline());
-        airplane.setCapacity(request.getCapacity());
-        airplane.setModel(request.getModel());
-        airplane.setTailNumber(request.getTailNumber());
+        airplane.setAirline(request.airline());
+        airplane.setCapacity(request.capacity());
+        airplane.setModel(request.model());
+        airplane.setTailNumber(request.tailNumber());
         return airplaneRepository.save(airplane);
     }
 
     @CacheEvict(value = "airplanes", allEntries = true)
     public Optional<Airplane> update(Long id, AirplaneRequest request) {
         return airplaneRepository.findById(id).map(airplane -> {
-            airplane.setAirline(request.getAirline());
-            airplane.setCapacity(request.getCapacity());
-            airplane.setModel(request.getModel());
-            airplane.setTailNumber(request.getTailNumber());
+            airplane.setAirline(request.airline());
+            airplane.setCapacity(request.capacity());
+            airplane.setModel(request.model());
+            airplane.setTailNumber(request.tailNumber());
             return airplaneRepository.save(airplane);
         });
     }

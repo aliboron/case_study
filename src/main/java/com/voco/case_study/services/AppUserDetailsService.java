@@ -2,7 +2,6 @@ package com.voco.case_study.services;
 
 import com.voco.case_study.models.User;
 import com.voco.case_study.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +16,6 @@ public class AppUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public AppUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

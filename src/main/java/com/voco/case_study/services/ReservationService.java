@@ -15,7 +15,6 @@ import com.voco.case_study.repositories.ReservationRepository;
 import com.voco.case_study.repositories.UserRepository;
 import com.voco.case_study.models.QReservation;
 import com.querydsl.core.BooleanBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,11 +23,23 @@ import java.util.Optional;
 @Service
 public class ReservationService {
 
-    @Autowired private ReservationRepository reservationRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private AirplaneRepository airplaneRepository;
-    @Autowired private AirportRepository airportRepository;
-    @Autowired private MailService mailService;
+    private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
+    private final AirplaneRepository airplaneRepository;
+    private final AirportRepository airportRepository;
+    private final MailService mailService;
+
+    public ReservationService(ReservationRepository reservationRepository,
+                              UserRepository userRepository,
+                              AirplaneRepository airplaneRepository,
+                              AirportRepository airportRepository,
+                              MailService mailService){
+        this.reservationRepository = reservationRepository;
+        this.userRepository = userRepository;
+        this.airplaneRepository = airplaneRepository;
+        this.airportRepository = airportRepository;
+        this.mailService = mailService;
+    }
 
     public List<Reservation> getUserReservations(String email) {
         User user = userRepository.findByEmail(email)
@@ -59,9 +70,9 @@ public class ReservationService {
 
 
         boolean isSeatTaken = reservationRepository.existsByAirplaneIdAndSeatNumberAndFlightDateAndStatus(
-                request.getAirplaneId(),
-                request.getSeatNumber(),
-                request.getFlightDate(),
+                request.airplaneId(),
+                request.seatNumber(),
+                request.flightDate(),
                 ReservationStatus.CONFIRMED
         );
 
@@ -72,26 +83,26 @@ public class ReservationService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
 
-        Airplane airplane = airplaneRepository.findById(request.getAirplaneId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", request.getAirplaneId()));
+        Airplane airplane = airplaneRepository.findById(request.airplaneId())
+                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", request.airplaneId()));
 
-        if (request.getSeatNumber() > airplane.getCapacity()) {
+        if (request.seatNumber() > airplane.getCapacity()) {
             throw new BadRequestException("Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
         }
 
-        Airport depAirport = airportRepository.findById(request.getDepartureAirportId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.getDepartureAirportId()));
+        Airport depAirport = airportRepository.findById(request.departureAirportId())
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.departureAirportId()));
 
-        Airport arrAirport = airportRepository.findById(request.getArrivalAirportId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.getArrivalAirportId()));
+        Airport arrAirport = airportRepository.findById(request.arrivalAirportId())
+                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.arrivalAirportId()));
 
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setAirplane(airplane);
         reservation.setDepartureAirport(depAirport);
         reservation.setArrivalAirport(arrAirport);
-        reservation.setFlightDate(request.getFlightDate());
-        reservation.setSeatNumber(request.getSeatNumber());
+        reservation.setFlightDate(request.flightDate());
+        reservation.setSeatNumber(request.seatNumber());
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
         try {

@@ -6,7 +6,6 @@ import com.voco.case_study.services.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,6 @@ public class AuthenticationController {
 
     private final AuthService authService;
 
-    @Autowired
     public AuthenticationController(AuthService authService) {
         this.authService = authService;
     }

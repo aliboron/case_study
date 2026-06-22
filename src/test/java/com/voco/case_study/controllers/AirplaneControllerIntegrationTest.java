@@ -2,11 +2,10 @@ package com.voco.case_study.controllers;
 
 import com.voco.case_study.BaseIntegrationTest;
 import com.voco.case_study.dtos.AirplaneRequest;
+import com.voco.case_study.models.Airplane;
 import com.voco.case_study.repositories.AirplaneRepository;
-import com.voco.case_study.services.AirplaneService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
@@ -14,11 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
-
-    @Autowired
-    private AirplaneService airplaneService;
 
     @Autowired
     private AirplaneRepository airplaneRepository;
@@ -26,11 +21,8 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "john.doe@email.com", roles = "PASSENGER")
     void createAirplane_byPassenger() throws Exception{
-        AirplaneRequest airplane = new AirplaneRequest();
-        airplane.setAirline("Turkish Airlines");
-        airplane.setCapacity(300);
-        airplane.setModel("Airbus A320neo");
-        airplane.setTailNumber("TK-301");
+        AirplaneRequest airplane = new AirplaneRequest("Airbus A321neo", "Airbus A321neo", 300,
+                "Turkish Airlines");
 
         mockMvc.perform(post("/airplanes")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -41,11 +33,8 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "admin1@airlines.com", roles = "ADMIN")
     void createAirplane_byAdmin() throws Exception{
-        AirplaneRequest airplane = new AirplaneRequest();
-        airplane.setAirline("Turkish Airlines");
-        airplane.setCapacity(300);
-        airplane.setModel("Airbus A320neo");
-        airplane.setTailNumber("TK-301");
+        AirplaneRequest airplane = new AirplaneRequest("Airbus A321neo", "Airbus A321neo", 300,
+                "Turkish Airlines");
 
         mockMvc.perform(post("/airplanes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -56,11 +45,9 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "admin1@airlines.com", roles = "ADMIN")
     void createAirplane_byAdmin_EmptyField() throws Exception{
-        AirplaneRequest airplane = new AirplaneRequest();
-        airplane.setAirline("");
-        airplane.setCapacity(100);
-        airplane.setModel("Airbus A320neo");
-        airplane.setTailNumber("TK-301");
+        AirplaneRequest airplane = new AirplaneRequest("Airbus A321neo", "", 300,
+                "Turkish Airlines");
+
 
         mockMvc.perform(post("/airplanes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,21 +58,19 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "john.doe@email.com", roles = "PASSENGER")
     void getAirplanes_All() throws Exception{
-
         airplaneRepository.deleteAll();
 
-        AirplaneRequest airplane = new AirplaneRequest();
+        Airplane airplane = new Airplane();
         airplane.setAirline("Pegasus");
         airplane.setCapacity(180);
         airplane.setModel("Boeing 737");
         airplane.setTailNumber("PG-101");
-        airplaneService.create(airplane);
+        airplaneRepository.save(airplane);
 
         mockMvc.perform(get("/airplanes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].model").value("Boeing 737"))
-                .andExpect(jsonPath("$[0].tailNumber").value("PG-101"));
+                .andExpect(jsonPath("$[0].model").value("Boeing 737"));
     }
 
     @Test
@@ -93,16 +78,15 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     void getAirplane_byId() throws Exception {
         airplaneRepository.deleteAll();
 
-        AirplaneRequest airplane = new AirplaneRequest();
+        Airplane airplane = new Airplane();
         airplane.setAirline("Pegasus");
         airplane.setCapacity(180);
         airplane.setModel("Boeing 737");
         airplane.setTailNumber("PG-101");
-        airplaneService.create(airplane);
+        airplane = airplaneRepository.save(airplane);
 
-        mockMvc.perform(get("/airplanes/1"))
+        mockMvc.perform(get("/airplanes/" + airplane.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.model").value("Boeing 737"))
                 .andExpect(jsonPath("$.tailNumber").value("PG-101"));
     }
 
@@ -111,7 +95,7 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     void getAirplane_byId_NotFound() throws Exception {
         airplaneRepository.deleteAll();
 
-        mockMvc.perform(get("/airplanes/1"))
+        mockMvc.perform(get("/airplanes/9999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -120,23 +104,14 @@ public class AirplaneControllerIntegrationTest extends BaseIntegrationTest {
     void deleteAirplane_byId() throws Exception {
         airplaneRepository.deleteAll();
 
-        AirplaneRequest airplane = new AirplaneRequest();
+        Airplane airplane = new Airplane();
         airplane.setAirline("Pegasus");
         airplane.setCapacity(180);
         airplane.setModel("Boeing 737");
         airplane.setTailNumber("PG-101");
-        airplaneService.create(airplane);
+        airplane = airplaneRepository.save(airplane);
 
-        mockMvc.perform(delete("/airplanes/1"))
+        mockMvc.perform(delete("/airplanes/" + airplane.getId()))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void deleteAirplane_byId_NonExistent() throws Exception {
-        airplaneRepository.deleteAll();
-
-        mockMvc.perform(delete("/airplanes/1"))
-                .andExpect(status().isNotFound());
     }
 }

@@ -7,7 +7,6 @@ import com.voco.case_study.models.Reservation;
 import com.voco.case_study.services.ReservationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +21,12 @@ import java.util.stream.Collectors;
 @Tag(name = "reservations")
 public class ReservationController {
 
-    @Autowired
+
     private ReservationService reservationService;
+
+    public ReservationController(ReservationService reservationService) {
+        this.reservationService = reservationService;
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('PASSENGER') or hasRole('ADMIN')")

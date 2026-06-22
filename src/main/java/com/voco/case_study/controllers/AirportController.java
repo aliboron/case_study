@@ -6,7 +6,6 @@ import com.voco.case_study.models.Airport;
 import com.voco.case_study.services.AirportService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +18,11 @@ import java.util.List;
 @Tag(name = "airports")
 public class AirportController {
 
-    @Autowired
     private AirportService airportService;
+
+    public AirportController(AirportService airportService){
+        this.airportService = airportService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Airport>> getAll() {
