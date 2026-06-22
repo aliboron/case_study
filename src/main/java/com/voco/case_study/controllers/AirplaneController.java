@@ -20,7 +20,7 @@ import java.util.List;
 @Tag(name = "airplanes")
 public class AirplaneController {
 
-    private AirplaneService airplaneService;
+    private final AirplaneService airplaneService;
 
 
     public AirplaneController(AirplaneService airplaneService){

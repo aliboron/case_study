@@ -20,7 +20,7 @@ import java.util.List;
 @Tag(name = "airports")
 public class AirportController {
 
-    private AirportService airportService;
+    private final AirportService airportService;
 
     public AirportController(AirportService airportService){
         this.airportService = airportService;
