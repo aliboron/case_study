@@ -1,6 +1,6 @@
 # Airline Reservation API
 
-A robust RESTful API built with **Spring Boot 3/4** for managing airline reservations. This project provides a complete backend solution for managing users, airplanes, airports, and flight bookings, backed by a PostgreSQL database and secured with JWT-based authentication.
+A robust RESTful API built with **Spring Boot 4** for managing airline reservations. This project provides a complete backend solution for managing users, airplanes, airports, and flight bookings, backed by a PostgreSQL database and secured with JWT-based authentication.
 
 ## 🚀 Features
 
@@ -11,7 +11,7 @@ A robust RESTful API built with **Spring Boot 3/4** for managing airline reserva
 * **Structured Error Handling**: Global exception handling (`@RestControllerAdvice`) provides clean, standardized JSON error responses for bad requests, conflicts, and not-found resources.
 * **Database Migrations**: Integrated with **Flyway** to automatically manage schema creation and seed initial data for users, airports, airplanes, and reservations.
 * **Dockerized Environment**: Fully containerized setup. A multi-stage `Dockerfile` and `compose.yaml` are provided to spin up the entire application and database with a single command.
-
+* **Mail Integration**: A basic mail integration for sending emails on reservation creation.
 ---
 
 ## 🛠️ Technology Stack
@@ -23,6 +23,8 @@ A robust RESTful API built with **Spring Boot 3/4** for managing airline reserva
 * **JWT (JSON Web Tokens)** (Stateless Authentication)
 * **Gradle (Kotlin DSL)** (Build Tool)
 * **Docker & Docker Compose** (Containerization)
+* **Redis** (Caching)
+* **QueryDSL** 
 
 ---
 
@@ -31,10 +33,10 @@ A robust RESTful API built with **Spring Boot 3/4** for managing airline reserva
 ```text
 src/main/java/com/voco/case_study/
 ├── advices/        # Global exception handlers (ControllerAdvice)
+├── config/         # Configuration classes
 ├── controllers/    # REST API endpoints
 ├── dtos/           # Data Transfer Objects (Requests & Responses)
 ├── enums/          # Enumerations (Role, ReservationStatus)
-├── exceptions/     # Custom domain exceptions (Conflict, NotFound, etc.)
 ├── models/         # JPA Entities (User, Airplane, Airport, Reservation)
 ├── repositories/   # Spring Data JPA repositories
 ├── security/       # JWT filters, utilities, and security config
@@ -56,7 +58,7 @@ The easiest way to run the application is using Docker Compose. It will automati
    ```bash
    docker compose up -d --build
    ```
-3. The application will be available at `http://localhost:8080`.
+3. The application will be available at `http://localhost:8080`. Swagger UI is available at `http://localhost:8080/swagger-ui.html`
 
 To view the application logs:
 ```bash
@@ -94,6 +96,7 @@ docker compose down -v
 * `POST /reservations` - Book a flight seat (**Passenger/Admin**).
 * `GET /reservations/me` - View current user's booking history (**Passenger/Admin**).
 * `GET /reservations` - View all reservations in the system (**Admin**).
+* `GET /reservations/search/` - Search reservations by user or status (**Admin**).
 * `DELETE /reservations/{id}` - Cancel a reservation (**Admin**).
 
 ---
