@@ -17,7 +17,6 @@ public class MailService {
         this.mailSender = mailSender;
     }
 
-    @Async
     public void sendPlainText(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

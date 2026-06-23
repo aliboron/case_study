@@ -15,7 +15,6 @@ import com.voco.case_study.repositories.ReservationRepository;
 import com.voco.case_study.repositories.UserRepository;
 import com.voco.case_study.models.QReservation;
 import com.querydsl.core.BooleanBuilder;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -108,7 +107,11 @@ public class ReservationService {
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
 
-        mailService.sendPlainText(userEmail, "Reservation successful!", "Thank you for using our service");
+        try {
+            mailService.sendPlainText(userEmail, "Reservation successful!", "Thank you for using our service");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return reservationRepository.save(reservation);
 
