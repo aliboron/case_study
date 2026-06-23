@@ -1,10 +1,10 @@
 package com.voco.case_study.services;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 import com.voco.case_study.dtos.ReservationRequest;
 import com.voco.case_study.enums.ReservationStatus;
-import com.voco.case_study.exceptions.BadRequestException;
-import com.voco.case_study.exceptions.ConflictException;
-import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.models.Airport;
 import com.voco.case_study.models.Reservation;
@@ -15,6 +15,7 @@ import com.voco.case_study.repositories.ReservationRepository;
 import com.voco.case_study.repositories.UserRepository;
 import com.voco.case_study.models.QReservation;
 import com.querydsl.core.BooleanBuilder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class ReservationService {
 
     public List<Reservation> getUserReservations(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with email: " + email));
         return reservationRepository.findByUser(user);
     }
 
@@ -78,24 +79,24 @@ public class ReservationService {
         );
 
         if (isSeatTaken) {
-            throw new ConflictException("Seat already taken!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Seat already taken!");
         }
 
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", userEmail));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with email: " + userEmail));
 
         Airplane airplane = airplaneRepository.findById(request.airplaneId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", request.airplaneId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Airplane not found with id: " + request.airplaneId()));
 
         if (request.seatNumber() > airplane.getCapacity()) {
-            throw new BadRequestException("Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seat number cant be greater than current airplane's capacity: " + airplane.getCapacity());
         }
 
         Airport depAirport = airportRepository.findById(request.departureAirportId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.departureAirportId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Airport not found with id: " + request.departureAirportId()));
 
         Airport arrAirport = airportRepository.findById(request.arrivalAirportId())
-                .orElseThrow(() -> new ResourceNotFoundException("Airport", "id", request.arrivalAirportId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Airport not found with id: " + request.arrivalAirportId()));
 
         Reservation reservation = new Reservation();
         reservation.setUser(user);
@@ -106,11 +107,9 @@ public class ReservationService {
         reservation.setSeatNumber(request.seatNumber());
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
-        try {
-            mailService.sendPlainText(userEmail, "Reservation successful!", "Thank you for using our service");
-        } catch (Exception e) {
-            System.out.println("Mail gönderim hatası: " + e.getMessage());
-        }
+
+        mailService.sendPlainText(userEmail, "Reservation successful!", "Thank you for using our service");
+
         return reservationRepository.save(reservation);
 
     }

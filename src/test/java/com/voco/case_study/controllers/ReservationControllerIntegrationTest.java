@@ -16,6 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,8 +78,7 @@ class ReservationControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void createReservation_WithoutLogin_ShouldReturn401() throws Exception {
-
-        ReservationRequest request = new ReservationRequest(1L,12L,12L,
+        ReservationRequest request = new ReservationRequest(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),
                 LocalDate.now().plusDays(5), 15);
 
         mockMvc.perform(post("/reservations")

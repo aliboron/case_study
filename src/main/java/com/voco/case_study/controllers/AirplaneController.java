@@ -1,9 +1,11 @@
 package com.voco.case_study.controllers;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 import java.util.UUID;
 
 import com.voco.case_study.dtos.AirplaneRequest;
-import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Airplane;
 import com.voco.case_study.services.AirplaneService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +38,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> getById(@PathVariable UUID id) {
         return airplaneService.getById(id)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Airplane not found with id: " + id));
     }
 
     @PostMapping
@@ -50,7 +52,7 @@ public class AirplaneController {
     public ResponseEntity<Airplane> update(@PathVariable UUID id, @RequestBody @Valid AirplaneRequest request) {
         return airplaneService.update(id, request)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Airplane", "id", id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Airplane not found with id: " + id));
     }
 
     @DeleteMapping("/{id}")
@@ -59,6 +61,6 @@ public class AirplaneController {
         if (airplaneService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
-        throw new ResourceNotFoundException("Airplane", "id", id);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Airplane not found with id: " + id);
     }
 }

@@ -1,10 +1,12 @@
 package com.voco.case_study.controllers;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 import java.util.UUID;
 
 import com.voco.case_study.dtos.ReservationRequest;
 import com.voco.case_study.dtos.ReservationResponse;
-import com.voco.case_study.exceptions.ResourceNotFoundException;
 import com.voco.case_study.models.Reservation;
 import com.voco.case_study.services.ReservationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -87,7 +89,7 @@ public class ReservationController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> cancelReservation(@PathVariable UUID id) {
         reservationService.cancel(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation", "id", id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found with id: " + id));
 
         return ResponseEntity.noContent().build();
     }
